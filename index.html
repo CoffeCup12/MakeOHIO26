@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ESP32 Warning Dashboard</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; margin-top: 50px; }
+    #status { font-size: 2em; font-weight: bold; padding: 20px; border-radius: 10px; display: inline-block; }
+    .normal { background-color: lightgreen; color: black; }
+    .warning { background-color: red; color: white; }
+  </style>
+</head>
+<body>
+  <h1>ESP32 Warning Dashboard</h1>
+  <div id="status" class="normal">Normal</div>
+
+ <script>
+    async function updateStatus() {
+        try {
+            const response = await fetch("http://localhost:5000/status");
+            const data = await response.json();
+            const statusDiv = document.getElementById("status");
+
+            if(data.warning){
+                statusDiv.textContent = "WARNING";
+                statusDiv.className = "warning";
+            } else {
+                statusDiv.textContent = "NORMAL";
+                statusDiv.className = "normal";
+            }
+        } catch(err) {
+            console.error(err);
+        }
+    }
+
+    // Poll every 2 seconds
+    setInterval(updateStatus, 2000);
+</script>
+</body>
+</html>
