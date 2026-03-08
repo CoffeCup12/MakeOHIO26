@@ -4,7 +4,7 @@ from model import LineRatePredictor
 
 # Load model
 model = LineRatePredictor(1)
-model.load_state_dict(torch.load("./model.pth", weights_only=True))
+model.load_state_dict(torch.load("./model2.pth", weights_only=True, map_location=torch.device('cpu')))
 model.eval()
 
 # warning flag
@@ -20,7 +20,7 @@ def analyze():
         data = request.get_json()
         delta_temps = data['delta_temp']
 
-        in_feature = torch.tensor(delta_temps, dtype=torch.float32).unsqueeze(0) 
+        in_feature = torch.tensor(delta_temps, dtype=torch.float32).unsqueeze(0).unsqueeze(-1) 
 
         with torch.no_grad():
             pred = model(in_feature)
@@ -35,6 +35,7 @@ def analyze():
             return jsonify({"status": "normal"})
 
     except Exception as e:
+        print(str(e))
         return jsonify({"error": str(e)}), 400
     
 @app.route("/status", methods=["GET"])
