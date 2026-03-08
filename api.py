@@ -12,21 +12,16 @@ app = Flask(__name__)
 @app.route("/analyze", methods=['POST'])
 def analyze():
     try:
-        # Read JSON data
+        
         data = request.get_json()
-
-        # Example JSON payload: {"delta_temp": [0.1, 0.2, 0.3]}
         delta_temps = data['delta_temp']
 
-        # Convert to tensor
-        in_feature = torch.tensor(delta_temps, dtype=torch.float32).unsqueeze(0)  # add batch dim
+        in_feature = torch.tensor(delta_temps, dtype=torch.float32).unsqueeze(0) 
 
-        # Forward pass
         with torch.no_grad():
             pred = model(in_feature)
 
-        # Assuming output is probability, threshold at 0.5
-        warning = (pred > 0.5).any().item()
+        warning = (pred > 0.8).any().item()
 
         if warning:
             print("Warning")
