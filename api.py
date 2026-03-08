@@ -4,7 +4,7 @@ from model import LineRatePredictor
 
 # Load model
 model = LineRatePredictor(1)
-model.load_state_dict(torch.load("./model2.pth", weights_only=True, map_location=torch.device('cpu')))
+model.load_state_dict(torch.load("./model4.pth", weights_only=True, map_location=torch.device('cpu')))
 model.eval()
 
 # warning flag
