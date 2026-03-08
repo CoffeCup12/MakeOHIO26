@@ -7,10 +7,14 @@ model = LineRatePredictor(1)
 model.load_state_dict(torch.load("./model.pth", weights_only=True))
 model.eval()
 
+# warning flag
+is_warning = False
+
 app = Flask(__name__)
 
 @app.route("/analyze", methods=['POST'])
 def analyze():
+    global is_warning
     try:
         
         data = request.get_json()
@@ -21,9 +25,9 @@ def analyze():
         with torch.no_grad():
             pred = model(in_feature)
 
-        warning = (pred > 0.8).any().item()
+        is_warning = (pred > 0.8).any().item()
 
-        if warning:
+        if is_warning:
             print("Warning")
             return jsonify({"status": "warning"})
         else:
@@ -32,6 +36,11 @@ def analyze():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+    
+@app.route("/status", methods=["GET"])
+def status():
+    return jsonify({"warning": is_warning})
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
